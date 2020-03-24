@@ -1,5 +1,7 @@
 const body = document.querySelector('body');
 const input = document.createElement('textarea');
+
+if (!localStorage.currentLang) localStorage.currentLang = 'eng';
 let currentLang = localStorage.currentLang || 'eng';
 
 input.setAttribute('readonly', 'readonly');
