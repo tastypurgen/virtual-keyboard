@@ -1,8 +1,8 @@
 const body = document.querySelector('body');
 const input = document.createElement('textarea');
 
-if (!localStorage.currentLang) localStorage.currentLang = 'eng';
-let currentLang = localStorage.currentLang || 'eng';
+if (!localStorage.lang) localStorage.lang = 'eng';
+let capsLock = false;
 
 input.setAttribute('readonly', 'readonly');
 body.append(input);
@@ -74,29 +74,26 @@ function createKeyboard(lang) {
   body.append(board);
 
   document.querySelector('#Lang').addEventListener('click', () => {
-    if (localStorage.currentLang === 'eng') {
-      localStorage.currentLang = 'rus';
-      currentLang = 'rus';
+    if (localStorage.lang === 'eng') {
+      localStorage.lang = 'rus';
     } else {
-      localStorage.currentLang = 'eng';
-      currentLang = 'eng';
+      localStorage.lang = 'eng';
     }
-    createKeyboard(localStorage.currentLang);
+    createKeyboard(localStorage.lang);
   });
 }
 
 function changeLang() {
-  if (localStorage.currentLang === 'rus') {
-    localStorage.currentLang = 'eng';
+  if (localStorage.lang === 'rus') {
+    localStorage.lang = 'eng';
     createKeyboard('eng');
   } else {
-    localStorage.currentLang = 'rus';
+    localStorage.lang = 'rus';
     createKeyboard('rus');
   }
 }
 
 function keyPress(e) {
-  console.log('e.key', e.key);
   if (e.key === 'Tab') {
     e.preventDefault();
     input.value += '    ';
@@ -104,27 +101,21 @@ function keyPress(e) {
     return;
   }
   if (e.key === 'CapsLock') {
-    if (currentLang === 'eng') {
-      currentLang = 'engShift';
-      createKeyboard('engShift');
+    if (!capsLock) {
+      if (localStorage.lang === 'eng') createKeyboard('engShift');
+      else createKeyboard('rusShift');
       document.querySelector('#CapsLock').classList.add('active');
-    } else if (currentLang === 'engShift') {
-      currentLang = 'eng';
-      createKeyboard('eng');
-      document.querySelector('#CapsLock').classList.remove('active');
-    } else if (currentLang === 'rus') {
-      currentLang = 'rusShift';
-      createKeyboard('rusShift');
-      document.querySelector('#CapsLock').classList.add('active');
+      capsLock = true;
     } else {
-      currentLang = 'rus';
-      createKeyboard('rus');
+      if (localStorage.lang === 'eng') createKeyboard('eng');
+      else createKeyboard('rus');
       document.querySelector('#CapsLock').classList.remove('active');
+      capsLock = false;
     }
     return;
   }
   if (e.key === 'Shift') {
-    if (localStorage.currentLang === 'eng') {
+    if (localStorage.lang === 'eng') {
       createKeyboard('engShift');
     } else {
       createKeyboard('rusShift');
@@ -137,8 +128,13 @@ function keyPress(e) {
     input.value += ' ';
     return;
   }
-  if (e.key === 'Backspace' || e.key === 'Delete') {
+  if (e.key === 'Backspace') {
     document.querySelector('#Backspace').classList.add('active');
+    input.value = input.value.slice(0, -1);
+    return;
+  }
+  if (e.key === 'Delete') {
+    document.querySelector('#Delete').classList.add('active');
     input.value = input.value.slice(0, -1);
     return;
   }
@@ -158,10 +154,15 @@ function keyPress(e) {
     input.value += "'";
     return;
   }
+  if (e.key === '\\') {
+    document.querySelector('#\\\\').classList.add('active');
+    input.value += '\\';
+    return;
+  }
   if (!document.querySelector(`[id='${e.key}']`)) changeLang();
 
   document.querySelector(`[id='${e.key}']`).classList.add('active');
-  if (e.key === 'ArrowUp' || e.key === 'ArrowDown' || e.key === 'ArrowRight' || e.key === 'ArrowLeft' || e.key === 'Control' || e.key === 'Win' || e.key === 'Alt' || e.key === 'Delete' || e.key === 'Fn') {
+  if (e.key === 'ArrowUp' || e.key === 'ArrowDown' || e.key === 'ArrowRight' || e.key === 'ArrowLeft' || e.key === 'Control' || e.key === 'Win' || e.key === 'Alt' || e.key === 'Delete' || e.key === 'Fn' || e.key === 'Lang') {
     e.preventDefault();
     return;
   }
@@ -169,28 +170,21 @@ function keyPress(e) {
 }
 
 function keyUp(e) {
-  if (e.key === 'CapsLock') return;
   if (e.key === 'Shift') {
-    if (localStorage.currentLang === 'eng') createKeyboard('eng');
+    if (localStorage.lang === 'eng') createKeyboard('eng');
     else createKeyboard('rus');
   }
-  if (e.key === ' ') {
-    document.querySelector('#space').classList.remove('active');
-    input.value += ' ';
-    return;
-  }
-  if (e.key === 'Meta') {
-    return;
-  }
-  if (e.key === "'") {
-    document.querySelector(`[id="${e.key}"]`).classList.remove('active');
-    return;
-  }
-  document.querySelector(`[id='${e.key}']`).classList.remove('active');
+
+  document.querySelectorAll('.key').forEach((key) => {
+    key.classList.remove('active');
+  });
+
+  if (capsLock) document.querySelector('#CapsLock').classList.add('active');
+  else document.querySelector('#CapsLock').classList.remove('active');
 }
 
 document.addEventListener('keydown', keyPress);
 
 document.addEventListener('keyup', keyUp);
 
-createKeyboard(localStorage.currentLang);
+createKeyboard(localStorage.lang);
