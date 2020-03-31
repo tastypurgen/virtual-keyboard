@@ -54,13 +54,9 @@ textarea {
 	transition: all .1s linear;
 }
 
-.key:hover {
-	background-color: rgb(52, 36, 75);
-	background-color: rgba(46, 46, 46, 0.432);
-}
-
 .active,
 .key:active {
+	background-color: rgba(46, 46, 46, 0.432);
 	top: 1px;
 	left: 1px;
 	box-shadow: none;
