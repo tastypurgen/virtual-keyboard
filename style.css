@@ -6,7 +6,7 @@
 }
 
 body {
-	font-family: 'Montserrat', sans-serif;
+	font-family: 'Ubuntu', sans-serif;
 	background: #0005;
 	max-width: 750px;
 	margin: 0 auto;
@@ -118,4 +118,9 @@ textarea {
 	background-image: url('assets/backspace.svg');
 	background-repeat: no-repeat;
 	background-position: center;
+}
+
+.subtitle {
+	margin-top: 5px;
+	color: rgb(112, 112, 112);
 }
